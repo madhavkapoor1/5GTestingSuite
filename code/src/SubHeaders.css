@@ -1,0 +1,21 @@
+.root {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: space-between; /* Distribute space evenly between items */
+    align-items: center; /* Center items vertically */
+    width: 99%;
+    padding: 10px; /* Padding around the container */
+    margin-top: 95px; /* Margin to create space below the fixed header */
+  }
+  
+  .subheading {
+    flex: 1; /* Each box will take up equal space */
+    margin: 0 10px; /* Add margin for spacing between boxes */
+    text-align: center; /* Center text inside the box */
+    background-color: #f0f0f0; /* Background color for visual distinction */
+    border: 1px solid #ccc; /* Border for visual distinction */
+    box-sizing: border-box; /* Ensure padding and border are included in the width and height */
+  }
+  
