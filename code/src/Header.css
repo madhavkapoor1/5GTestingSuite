@@ -1,17 +1,23 @@
 .header {
-    position: fixed; /* Fixed position so it stays at the top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 60px; /* Ensure the header has a height */
-    background-color: #282c34; /* Background color to make it visually distinct */
-    color: white; /* Text color */
-    box-shadow: 0 4px 2px -2px gray; /* Shadow for visual separation */
-    z-index: 1000; /* Ensure it stays on top */
-    padding: 10px;
-  }
-  
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #282c34;
+  color: white;
+  box-shadow: 0 4px 2px -2px gray;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
   .header h1 {
-    margin: 0;
+    font-size: 3rem;
   }
-  
+}

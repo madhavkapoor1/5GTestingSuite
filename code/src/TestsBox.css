@@ -1,8 +1,46 @@
-.root{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f5f5f5;
+.root2 {
+  padding: 20px;
+  width: 90%;
+  max-width: 30rem;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-top: 50px;
+}
+
+@media (min-width: 768px) {
+  .root2 {
+    width: 60%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .root2 {
+    width: 40%;
+  }
+}
+
+.IP {
+  margin-bottom: 20px;
+}
+
+.TestOptions {
+  margin-bottom: 20px;
+}
+
+.SubmitButton {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
 }
