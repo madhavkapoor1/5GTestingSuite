@@ -1,20 +1,26 @@
 const express = require('express');
 const app = express();
-const PORT = 4000
+const fs = require('node:fs');
+const PORT = 4000  
 
 //Temp Database
 const db = [];
 
 //Middleware
 app.use(express.json());
-app.use(express.static('public'));
+//app.use(express.static('public'));
 app.use(require('cors')());
 
 //Routes
 app.get('/', (req, res) => {
 
-    console.log('Request received for GET'); 
-    res.sendStatus(200)
+    fs.readFile('./public/index.html', 'utf8', (err, html) => {
+        if (err) {
+            res.status(501).send('Sorry, something went wrong');
+            return;
+        }
+        res.status(200).send(html);
+    });
 });
 
 app.post('/api/info', (req, res) => {
