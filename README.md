@@ -1,3 +1,4 @@
-# A testing interface designed to record 5G signal and network performance parameters, targeted towards moving vehicles, such as UAVs.
+# This is an application designed to record 5G signal and network performance metrics, specifically targeted towards moving vehicles, such as UAVs. Has the ability to automatically setup and run iperf3 containers, MTR, ookla tests, modem diagnostics, GPS coordiantes, among other parameters. 
 
-## Running on React, Typescript, and Vite.
+## Frontend made using React, Typescript, and Vite.
+## Backend made using Express.js / Node.js
