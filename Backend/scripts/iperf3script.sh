@@ -12,13 +12,13 @@ start_iperf3() {
   echo "Starting iperf3 tests at $(date)" | tee -a downlinkdata.txt uplinkdata.txt maxdata.txt
 
   # Start iperf3 commands in the background
-  iperf3 -c 99.210.18.80 -p 5201 -u -b 800bps -l 100 -t 10 -V --timestamp >> downlinkdata.txt &
+  iperf3 -c 99.210.18.80 -p 5201 -u -b 800bps -l 100 -t 10 -V --timestamp >> ./output/downlinkdata.txt &
   PID1=$!
 
-  iperf3 -c 99.210.18.80 -p 5202 -u -b 2M -t 10 -R -V --timestamp >> uplinkdata.txt &
+  iperf3 -c 99.210.18.80 -p 5202 -u -b 2M -t 10 -R -V --timestamp >> ./output/uplinkdata.txt &
   PID2=$!
 
-  iperf3 -c 99.210.18.80 -p 5203 -t 10 -V --timestamp >> maxdata.txt &
+  iperf3 -c 99.210.18.80 -p 5203 -t 10 -V --timestamp >> ./output/maxdata.txt &
   PID3=$!
 }
 

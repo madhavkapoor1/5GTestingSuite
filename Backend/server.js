@@ -57,6 +57,45 @@ const runScriptAndReturnFile = (scriptName, outputFileName, res) => {
     });
 };
 
+const runScriptAndReturnFiles = (scriptName, outputFileNames, res) => {
+    exec(`./scripts/${scriptName}.sh`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing ${scriptName}:`, error);
+            res.status(500).send(`Error executing ${scriptName}`);
+            return;
+        }
+
+        // Check if all files exist and generate a download link for each
+        let fileLinks = '';
+        let filesMissing = false;
+
+        outputFileNames.forEach((outputFileName) => {
+            const filePath = path.join(__dirname, 'output', outputFileName);
+
+            if (fs.existsSync(filePath)) {
+                fileLinks += `<p><a href="/download/${outputFileName}">Click here to download ${outputFileName}</a></p>`;
+            } else {
+                console.error(`File not found: ${filePath}`);
+                filesMissing = true;
+            }
+        });
+
+        if (filesMissing) {
+            res.status(404).send('One or more files were not found.');
+        } else {
+            // Generate an HTML page with download links for all files
+            const downloadPage = `<html>
+                                    <body>
+                                        ${fileLinks}
+                                    </body>
+                                  </html>`;
+
+            res.status(200).send(downloadPage);
+        }
+    });
+};
+
+
 // Endpoint to serve the downloadable file
 app.get('/download/:fileName', (req, res) => {
     const fileName = req.params.fileName;
@@ -74,8 +113,10 @@ app.get('/download/:fileName', (req, res) => {
 
 // Define endpoints for each test
 app.get('/iPerf3', (req, res) => {
-    runScriptAndReturnFile('iperf3script', 'downlinkdata.txt', res);
+    const outputFileNames = ['downlinkdata.txt', 'uplinkdata.txt', 'maxdata.txt'];
+    runScriptAndReturnFiles('iperf3script', outputFileNames, res);
 });
+
 
 app.get('/Ping', (req, res) => {
     runScriptAndReturnFile('pingm', 'pingresults.txt', res);
