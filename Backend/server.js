@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const fs = require('node:fs');
+const path = require('node:path');
+const { exec } = require('child_process');
 const PORT = 4000  
 
 //Temp Database
@@ -24,7 +26,7 @@ app.get('/', (req, res) => {
     });
 });
 
-const runScriptAndReturnFile = (scriptName, res) => {
+const runScriptAndReturnFile = (scriptName, outputFileName, res) => {
     exec(`./scripts/${scriptName}.sh`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing ${scriptName}:`, error);
@@ -32,35 +34,55 @@ const runScriptAndReturnFile = (scriptName, res) => {
             return;
         }
 
-        // Assuming the script generates a file named ${scriptName}.txt
-        const filePath = path.join(__dirname, 'output', `${scriptName}.txt`);
+        // Assuming the script generates a file named outputFileName
+        const filePath = path.join(__dirname, 'output', outputFileName);
 
-        // Send the output of the shell command and the file contents
-        fs.readFile(filePath, 'utf8', (err, data) => {
+        // Check if the file exists and then generate a download link
+        fs.access(filePath, fs.constants.F_OK, (err) => {
             if (err) {
-                console.error(`Error reading file ${filePath}:`, err);
-                res.status(500).send(`Error reading file ${filePath}`);
+                console.error(`File not found: ${filePath}`);
+                res.status(404).send(`File not found: ${outputFileName}`);
                 return;
             }
-            res.status(200).json({
-                output: stdout,
-                fileContent: data
-            });
+
+            // Generate an HTML page with a download link
+            const downloadLink = `<html>
+                                    <body>
+                                        <p><a href="/download/${outputFileName}">Click here to download ${outputFileName}</a></p>
+                                    </body>
+                                  </html>`;
+
+            res.status(200).send(downloadLink);
         });
     });
 };
 
-// Define endpoints for each test
-app.get('/iPerf3', (req, res) => {
-    runScriptAndReturnFile('iPerf3', res);
+// Endpoint to serve the downloadable file
+app.get('/download/:fileName', (req, res) => {
+    const fileName = req.params.fileName;
+    const filePath = path.join(__dirname, 'output', fileName);
+
+    res.download(filePath, fileName, (err) => {
+        if (err) {
+            console.error(`Error sending file: ${filePath}`, err);
+            res.status(500).send(`Error sending file: ${fileName}`);
+        }
+    });
 });
 
-app.get('/ICMPLatency', (req, res) => {
-    runScriptAndReturnFile('ICMPLatency', res);
+
+
+// Define endpoints for each test
+app.get('/iPerf3', (req, res) => {
+    runScriptAndReturnFile('iperf3script', 'downlinkdata.txt', res);
+});
+
+app.get('/Ping', (req, res) => {
+    runScriptAndReturnFile('pingm', 'pingresults.txt', res);
 });
 
 app.get('/MyTraceRoute', (req, res) => {
-    runScriptAndReturnFile('MyTraceRoute', res);
+    runScriptAndReturnFile('mtr_script', 'mtr_results.txt', res);
 });
 
 app.get('/Ookla5G', (req, res) => {

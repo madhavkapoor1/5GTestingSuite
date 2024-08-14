@@ -3,6 +3,14 @@
 GET http://localhost:4000/
 
 ###
+
+GET http://localhost:4000/Ping
+
+###
+
+GET http://localhost:4000/MyTraceRoute
+
+###
 POST http://localhost:4000/api/info
 Content-Type: application/json
 
