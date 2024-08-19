@@ -112,17 +112,17 @@ app.get('/download/:fileName', (req, res) => {
 
 
 // Define endpoints for each test
-app.get('/iPerf3', (req, res) => {
+app.get('/iperf3', (req, res) => {
     const outputFileNames = ['downlinkdata.txt', 'uplinkdata.txt', 'maxdata.txt'];
     runScriptAndReturnFiles('iperf3script', outputFileNames, res);
 });
 
 
-app.get('/Ping', (req, res) => {
+app.get('/ping', (req, res) => {
     runScriptAndReturnFile('pingm', 'pingresults.txt', res);
 });
 
-app.get('/MyTraceRoute', (req, res) => {
+app.get('/mtr', (req, res) => {
     runScriptAndReturnFile('mtr_script', 'mtr_results.txt', res);
 });
 

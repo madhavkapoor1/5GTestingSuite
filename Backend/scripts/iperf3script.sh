@@ -9,7 +9,7 @@ is_running() {
 # Function to start iperf3 processes and log start time
 start_iperf3() {
   # Log the start time
-  echo "Starting iperf3 tests at $(date)" | tee -a downlinkdata.txt uplinkdata.txt maxdata.txt
+  echo "Starting iperf3 tests at $(date)" | tee -a ./output/downlinkdata.txt ./output/uplinkdata.txt ./output/maxdata.txt
 
   # Start iperf3 commands in the background
   iperf3 -c 99.210.18.80 -p 5201 -u -b 800bps -l 100 -t 10 -V --timestamp >> ./output/downlinkdata.txt &
@@ -44,5 +44,5 @@ monitor_processes() {
 
 start_iperf3
 monitor_processes
-echo '-----------------------' | tee -a downlinkdata.txt uplinkdata.txt maxdata.txt > /dev/null
+echo '-----------------------' | tee -a ./output/downlinkdata.txt ./output/uplinkdata.txt ./output/maxdata.txt > /dev/null
 echo "All processes have completed. Waiting for the next run..."

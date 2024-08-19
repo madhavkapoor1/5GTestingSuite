@@ -2,6 +2,11 @@ import { useState } from 'react';
 import './TestsBox.css';
 
 export default function TestsBox() {
+
+  type TestResult = 
+  | { test: string; data: any; } 
+  | { test: string; error: string; };
+  
   const [ipAddress, setIpAddress] = useState<string>('');
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
 
@@ -18,20 +23,57 @@ export default function TestsBox() {
     );
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Call the function to run the bash script based on the selected tests
-    runTests(ipAddress, selectedTests);
-  };
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-  const runTests = (ip: string, tests: string[]) => {
-    // This function will run the appropriate bash script based on the selected tests
-    console.log(`Running tests on IP: ${ip}`);
-    tests.forEach((test) => {
-      console.log(`Running ${test}`);
-      // Implement the logic to run the bash script here
+  if (!ipAddress) {
+    alert("Please enter an IP address.");
+    return;
+  }
+
+  const testPromises = selectedTests.map((test) => {
+    const url = new URL(`http://localhost:4000/${test}`);
+    url.searchParams.append('ip', ipAddress);
+
+    return fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`Test ${test} failed with status: ${response.status}`);
+      }
+      const data = await response.json();
+      return { test, data };  // return an object with a 'data' property
+    })
+    .catch((error) => {
+      return { test, error: error.message };  // return an object with an 'error' property
     });
-  };
+  });
+
+  try {
+    const results: TestResult[] = await Promise.all(testPromises);
+
+    // Use type guards to handle different result types
+    results.forEach((result) => {
+      if ('data' in result) {
+        console.log(`Test ${result.test} completed successfully:`, result.data);
+        // Update the UI to display the success result
+      } else if ('error' in result) {
+        console.error(`Test ${result.test} failed:`, result.error);
+        // Update the UI to display the error message
+      }
+    });
+
+    //setTestResults(results);  // Update the state with the results
+  } catch (err) {
+    console.error('An error occurred while running tests:', err);
+  }
+};
+
+
 
   return (
     <>
@@ -54,8 +96,8 @@ export default function TestsBox() {
             <label>
               <input
                 type='checkbox'
-                value='IPERF3'
-                checked={selectedTests.includes('IPERF3')}
+                value='iperf3'
+                checked={selectedTests.includes('iperf3')}
                 onChange={handleTestChange}
               />
               iPerf3 Tests
@@ -64,8 +106,8 @@ export default function TestsBox() {
             <label>
               <input
                 type='checkbox'
-                value='LATENCY'
-                checked={selectedTests.includes('LATENCY')}
+                value='ping'
+                checked={selectedTests.includes('ping')}
                 onChange={handleTestChange}
               />
               ICMP Latency
@@ -74,8 +116,8 @@ export default function TestsBox() {
             <label>
               <input
                 type='checkbox'
-                value='MTR'
-                checked={selectedTests.includes('MTR')}
+                value='mtr'
+                checked={selectedTests.includes('mtr')}
                 onChange={handleTestChange}
               />
               MyTraceRoute
@@ -111,7 +153,6 @@ export default function TestsBox() {
               Include GPS Coordinates
             </label>
             <br />
-            {/* Add more test options as needed */}
           </div>
 
           <div className='SubmitButton'>
