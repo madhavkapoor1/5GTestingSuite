@@ -3,6 +3,7 @@ const app = express();
 const fs = require('node:fs');
 const path = require('node:path');
 const { exec } = require('child_process');
+const https = require('https');  
 const PORT = 4000  
 
 //Temp Database
@@ -134,8 +135,96 @@ app.get('/SignalParams', (req, res) => {
     runScriptAndReturnFile('SignalParams', res);
 });
 
-app.get('/IncludeGPS', (req, res) => {
-    runScriptAndReturnFile('IncludeGPS', res);
+app.get('/GPS', (req, res) => {
+    // Options for the HTTPS request
+    const options = {
+        hostname: 'www.cradlepointecm.com',
+        path: '/api/v2/locations/',
+        method: 'GET',
+        headers: {
+            'X-ECM-API-ID': 'd7310036-1e43-4490-a480-6d6d9d2dea1d',
+            'X-ECM-API-KEY': 'c34a6f657dba6c15efe5911cc0b3bac63602d5a2',
+            'X-CP-API-ID': '77384b9a',
+            'X-CP-API-KEY': 'c609221dbe701bc4218ec871797399b7',
+        }
+    };
+
+    // Making the HTTPS request
+    const request = https.request(options, (response) => {
+        let data = '';
+
+        // Listen for data chunks
+        response.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        // End of response
+        response.on('end', () => {
+            try {
+                // Parse the JSON data
+                const jsonData = JSON.parse(data);
+
+                // Check if jsonData.data exists and is an array
+                if (jsonData.data && Array.isArray(jsonData.data)) {
+                    // Extract required data
+                    const locationData = jsonData.data.map(item => {
+                        // Get current local time in HH:MM:SS format
+                        const now = new Date();
+                        const hours = now.getHours().toString().padStart(2, '0');
+                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                        const seconds = now.getSeconds().toString().padStart(2, '0');
+                        const timestamp = `${hours}:${minutes}:${seconds}`;
+
+                        return {
+                            latitude: item.latitude,
+                            longitude: item.longitude,
+                            altitude_meters: item.altitude_meters,
+                            accuracy: item.accuracy,
+                            timestamp: timestamp  // Using local time in HH:MM:SS format
+                        };
+                    });
+
+                    // Append the location data to the text file
+                    const filePath = path.join(__dirname, 'gps_data.txt');
+                    const fileContent = locationData.map(item => JSON.stringify(item)).join('\n') + '\n';
+
+                    fs.appendFile(filePath, fileContent, (err) => {
+                        if (err) {
+                            console.error('Error appending to file:', err);
+                            res.status(500).json({ error: 'Failed to append GPS data to file' });
+                            return;
+                        }
+
+                        // Generate a download link
+                        const fileLink = `<a href="/download/gps_data.txt" download>Download GPS Data</a>`;
+                        const downloadPage = `<html>
+                                                <body>
+                                                    ${fileLink}
+                                                </body>
+                                              </html>`;
+
+                        // Send the download page to the client
+                        res.status(200).send(downloadPage);
+                    });
+                } else {
+                    console.error('Invalid data format:', jsonData);
+                    res.status(500).json({ error: 'Invalid data format received from API' });
+                }
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+                res.status(500).json({ error: 'Failed to parse JSON response' });
+            }
+        });
+    });
+
+    // Handle request errors
+    request.on('error', (error) => {
+        console.error('Error fetching GPS data:', error);
+        res.status(500).json({ error: 'Failed to fetch GPS data' });
+    });
+
+    // End the request
+    request.end();
 });
 
 app.post('/api/info', (req, res) => {
