@@ -32,8 +32,24 @@ export default function ResultsBox() {
     return () => clearInterval(interval);
   }, []);
 
+  const resetOutput = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/reset-output', {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to reset output directory');
+      }
+      // Fetch files again to update the UI
+      fetchFiles();
+    } catch (error) {
+      console.error('Error resetting output directory:', error);
+    }
+  };
+
   return (
     <div className='root3'>
+      <button onClick={resetOutput}>Reset Output</button>
       {loading ? (
         <p>Loading files...</p>
       ) : files.length === 0 ? (

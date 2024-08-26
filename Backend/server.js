@@ -257,10 +257,30 @@ app.put('/api', (req, res) => {
     res.status(200).send('Hello World!');
 });
 
-app.delete('/delete/:id', (req, res) => {
+// Endpoint to delete all files in the output directory
+app.delete('/api/reset-output', (req, res) => {
+    console.log('Request received for DELETE');
 
-    console.log('Request received for DELETE'); 
+    fs.readdir(outputDirectory, (err, files) => {
+        if (err) {
+            console.error('Unable to read output directory:', err);
+            return res.status(500).json({ error: 'Unable to read output directory' });
+        }
 
+        // Iterate through each file and delete it
+        files.forEach((file) => {
+            const filePath = path.join(outputDirectory, file);
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(`Error deleting file: ${filePath}`, err);
+                } else {
+                    console.log(`Deleted file: ${filePath}`);
+                }
+            });
+        });
+
+        res.status(200).json({ message: 'All files deleted from output directory' });
+    });
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));   
