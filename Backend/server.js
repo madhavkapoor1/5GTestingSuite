@@ -6,6 +6,8 @@ const { exec } = require('child_process');
 const https = require('https');  
 const PORT = 4000  
 
+const outputDirectory = './output';
+
 //Temp Database
 const db = [];
 
@@ -96,6 +98,17 @@ const runScriptAndReturnFiles = (scriptName, outputFileNames, res) => {
     });
 };
 
+// Endpoint to list files
+app.get('/api/files', (req, res) => {
+    fs.readdir(outputDirectory, (err, files) => {
+      if (err) {
+        return res.status(500).json({ error: 'Unable to scan directory' });
+      }
+      console.log('files read')
+      res.json({ files });
+    });
+  });
+
 
 // Endpoint to serve the downloadable file
 app.get('/download/:fileName', (req, res) => {
@@ -185,7 +198,7 @@ app.get('/GPS', (req, res) => {
                     });
 
                     // Append the location data to the text file
-                    const filePath = path.join(__dirname, 'gps_data.txt');
+                    const filePath = path.join(__dirname, './output/gps_data.txt');
                     const fileContent = locationData.map(item => JSON.stringify(item)).join('\n') + '\n';
 
                     fs.appendFile(filePath, fileContent, (err) => {
@@ -196,7 +209,7 @@ app.get('/GPS', (req, res) => {
                         }
 
                         // Generate a download link
-                        const fileLink = `<a href="/download/gps_data.txt" download>Download GPS Data</a>`;
+                        const fileLink = `<a href="./output/gps_data.txt" download>Download GPS Data</a>`;
                         const downloadPage = `<html>
                                                 <body>
                                                     ${fileLink}

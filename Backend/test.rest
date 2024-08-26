@@ -18,6 +18,9 @@ GET http://localhost:4000/MyTraceRoute
 ###
 GET http://localhost:4000/GPS
 
+###
+GET http://localhost:4000/api/files
+
 
 //testing POST PUT DELETE
 ###
