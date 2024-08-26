@@ -20,25 +20,3 @@ GET http://localhost:4000/GPS
 
 ###
 GET http://localhost:4000/api/files
-
-
-//testing POST PUT DELETE
-###
-POST http://localhost:4000/api/info
-Content-Type: application/json
-
-{
-    "information": "My name is Madhav"
-}
-
-###
-PUT http://localhost:4000/api/info
-Content-Type: application/json
-
-{
-    "information": "My name is Madhav"
-}
-
-###
-//sending query parameters
-PUT http://localhost:4000/api/?word=Madhav&banana=yellow

@@ -8,9 +8,6 @@ const PORT = 4000
 
 const outputDirectory = './output';
 
-//Temp Database
-const db = [];
-
 //Middleware
 app.use(express.json());
 //app.use(express.static('public'));
@@ -238,23 +235,6 @@ app.get('/GPS', (req, res) => {
 
     // End the request
     request.end();
-});
-
-app.post('/api/info', (req, res) => {
-    
-    const { information } = req.body;
-    console.log('The posted request was: ', information);  
-    db.push(information);
-    console.log('DB', db);
-    res.status(201).json({"YourMessage": information});
-});
-
-app.put('/api', (req, res) => {    
-    // const { information } = req.body;
-    // console.log(information); 
-    const {word, banana} = req.query;
-    console.log(word, banana); 
-    res.status(200).send('Hello World!');
 });
 
 // Endpoint to delete all files in the output directory
