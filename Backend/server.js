@@ -3,7 +3,8 @@ const app = express();
 const fs = require('node:fs');
 const path = require('node:path');
 const { exec } = require('child_process');
-const https = require('https');  
+const https = require('https');
+require('dotenv').config();  
 const PORT = 4000  
 
 const outputDirectory = './output';
@@ -147,16 +148,20 @@ app.get('/SignalParams', (req, res) => {
 });
 
 app.get('/GPS', (req, res) => {
+    console.log('X_ECM_API_ID:', process.env.X_ECM_API_ID); // Debugging line
+    console.log('X_ECM_API_KEY:', process.env.X_ECM_API_KEY); // Debugging line
+    console.log('X_CP_API_ID:', process.env.X_CP_API_ID); // Debugging line
+    console.log('X_CP_API_KEY:', process.env.X_CP_API_KEY); // Debugging line
     // Options for the HTTPS request
     const options = {
         hostname: 'www.cradlepointecm.com',
         path: '/api/v2/locations/',
         method: 'GET',
         headers: {
-            'X-ECM-API-ID': 'd7310036-1e43-4490-a480-6d6d9d2dea1d',
-            'X-ECM-API-KEY': 'c34a6f657dba6c15efe5911cc0b3bac63602d5a2',
-            'X-CP-API-ID': '77384b9a',
-            'X-CP-API-KEY': 'c609221dbe701bc4218ec871797399b7',
+            'X-ECM-API-ID': process.env.X_ECM_API_ID,
+            'X-ECM-API-KEY': process.env.X_ECM_API_KEY,
+            'X-CP-API-ID': process.env.X_CP_API_ID,
+            'X-CP-API-KEY': process.env.X_CP_API_KEY,
         }
     };
 
