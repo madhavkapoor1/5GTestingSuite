@@ -20,3 +20,6 @@ GET http://localhost:4000/GPS
 
 ###
 GET http://localhost:4000/api/files
+
+###
+GET http://localhost:4000/teststatus

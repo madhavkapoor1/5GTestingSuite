@@ -1,7 +1,7 @@
 #!/bin/sh
 
 dev="unknown"
-dest="99.210.18.80"
+dest="99.210.172.230"
 if [ $(id -u) = 0 ] ; then
 	interval=0.01
 else
@@ -56,7 +56,7 @@ shift $((OPTIND -1))
 if [ $# -ge 1 ] ; then
     dest=$1
 fi
-echo "Starting ping test"
+echo "Starting ping test" >> ./output/testlog.txt
 echo "Using device: ${dev}" >> ./output/pingresults.txt
 echo "Destination: ${dest}" >> ./output/pingresults.txt
 echo "Packet size (payload): ${packet_size} bytes" >> ./output/pingresults.txt
@@ -67,4 +67,4 @@ starttime=$(date)
 echo "Starting test at ${starttime}" >> ./output/pingresults.txt
 ping -D -s ${packet_size} -i ${interval} -c ${num_req} ${dest} | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0 }' >> ./output/pingresults.txt
 echo "--------------------------" >> ./output/pingresults.txt
-echo "Ping test done"
+echo "Ping test done" >> ./output/testlog.txt

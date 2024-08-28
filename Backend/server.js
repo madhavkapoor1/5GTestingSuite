@@ -7,6 +7,7 @@ const https = require('https');
 const PORT = 4000  
 
 const outputDirectory = './output';
+const logFilePath = './output/testlog.txt';
 
 //Middleware
 app.use(express.json());
@@ -260,6 +261,16 @@ app.delete('/api/reset-output', (req, res) => {
         });
 
         res.status(200).json({ message: 'All files deleted from output directory' });
+    });
+});
+
+app.get('/teststatus', (req, res) => {
+    fs.readFile(logFilePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading test log file:', err);
+            return res.status(500).send('Error reading test log file');
+        }
+        res.status(200).send(data); // Send the file content as response
     });
 });
 
