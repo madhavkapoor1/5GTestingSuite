@@ -56,7 +56,7 @@ shift $((OPTIND -1))
 if [ $# -ge 1 ] ; then
     dest=$1
 fi
-echo "Starting ping test" >> ./output/testlog.txt
+echo "Starting ping test at $(date)" >> ./output/testlog.txt
 echo "Using device: ${dev}" >> ./output/pingresults.txt
 echo "Destination: ${dest}" >> ./output/pingresults.txt
 echo "Packet size (payload): ${packet_size} bytes" >> ./output/pingresults.txt
