@@ -126,13 +126,17 @@ app.get('/download/:fileName', (req, res) => {
 
 // Define endpoints for each test
 app.get('/iperf3', (req, res) => {
-    const outputFileNames = ['downlinkdata.txt', 'uplinkdata.txt', 'maxdata.txt'];
+    const outputFileNames = ['downlinkdata.txt', 'uplinkdata.txt'];
     runScriptAndReturnFiles('iperf3script', outputFileNames, res);
 });
 
 
 app.get('/ping', (req, res) => {
     runScriptAndReturnFile('pingm', 'pingresults.txt', res);
+});
+
+app.get('/TCP', (req, res) => {
+    runScriptAndReturnFile('tcplatency', 'TCPresults.txt', res);
 });
 
 app.get('/mtr', (req, res) => {
@@ -148,10 +152,6 @@ app.get('/SignalParams', (req, res) => {
 });
 
 app.get('/GPS', (req, res) => {
-    console.log('X_ECM_API_ID:', process.env.X_ECM_API_ID); // Debugging line
-    console.log('X_ECM_API_KEY:', process.env.X_ECM_API_KEY); // Debugging line
-    console.log('X_CP_API_ID:', process.env.X_CP_API_ID); // Debugging line
-    console.log('X_CP_API_KEY:', process.env.X_CP_API_KEY); // Debugging line
     // Options for the HTTPS request
     const options = {
         hostname: 'www.cradlepointecm.com',
@@ -219,8 +219,11 @@ app.get('/GPS', (req, res) => {
                                                 </body>
                                               </html>`;
 
-                        // Send the download page to the client
-                        res.status(200).send(downloadPage);
+                        // Introduce a 5-second delay before sending the response
+                        setTimeout(() => {
+                            res.status(200).send(downloadPage);
+                        }, 5000); // 5000 milliseconds = 5 seconds
+
                     });
                 } else {
                     console.error('Invalid data format:', jsonData);
@@ -241,6 +244,7 @@ app.get('/GPS', (req, res) => {
 
     // End the request
     request.end();
+
 });
 
 // Endpoint to delete all files in the output directory

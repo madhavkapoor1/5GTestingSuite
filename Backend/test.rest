@@ -23,3 +23,6 @@ GET http://localhost:4000/api/files
 
 ###
 GET http://localhost:4000/teststatus
+
+###
+GET http://localhost:4000/TCP

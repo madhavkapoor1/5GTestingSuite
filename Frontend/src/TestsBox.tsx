@@ -130,6 +130,16 @@ export default function TestsBox() {
             <label>
               <input
                 type='checkbox'
+                value='TCP'
+                checked={selectedTests.includes('TCP')}
+                onChange={handleTestChange}
+              />
+              TCP Latency
+            </label>
+            <br />
+            <label>
+              <input
+                type='checkbox'
                 value='mtr'
                 checked={selectedTests.includes('mtr')}
                 onChange={handleTestChange}
@@ -145,16 +155,6 @@ export default function TestsBox() {
                 onChange={handleTestChange}
               />
               Ookla 5G SpeedTest
-            </label>
-            <br />
-            <label>
-              <input
-                type='checkbox'
-                value='5GPARAMS'
-                checked={selectedTests.includes('5GPARAMS')}
-                onChange={handleTestChange}
-              />
-              5G Signal Parameters
             </label>
             <br />
             <label>
