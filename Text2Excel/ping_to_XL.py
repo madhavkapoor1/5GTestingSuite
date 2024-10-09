@@ -24,16 +24,25 @@ with open("../Backend/output/gps_data.txt", "r") as gps_file:
     for line in gps_file:
         gps_data.append(json.loads(line))
 
-# Helper function to find the closest GPS data within 2 seconds of a given timestamp
+# Helper function to find the closest GPS data based on timestamp
 def find_closest_gps_data(timestamp):
     time_format = "%H:%M:%S"
     target_time = datetime.strptime(timestamp, time_format)
     
+    closest_entry = None
+    closest_diff = float('inf')
+
+    # Iterate over GPS data to find the closest timestamp
     for gps in gps_data:
-        gps_time = datetime.strptime(gps["timestamp"], "%H:%M:%S")
-        if abs((gps_time - target_time).total_seconds()) <= 2:
-            return gps["latitude"], gps["longitude"], gps["altitude_meters"]
-    
+        gps_time = datetime.strptime(gps["timestamp"], time_format)
+        time_diff = abs((gps_time - target_time).total_seconds())
+        
+        if time_diff < closest_diff:
+            closest_diff = time_diff
+            closest_entry = gps
+
+    if closest_entry:
+        return closest_entry["latitude"], closest_entry["longitude"], closest_entry["altitude_meters"]
     return None, None, None
 
 # Read the ping test results
@@ -82,7 +91,7 @@ with open("../Backend/output/pingresults.txt", "r") as file:
 # Create a DataFrame from the lists
 df = pd.DataFrame({
     "Time": timestamp_list,
-    "Packet Loss (%)": packet_loss_list,
+    "Packet Loss Percentage": packet_loss_list,
     "RTT Min (ms)": rtt_min_list,
     "RTT Avg (ms)": rtt_avg_list,
     "RTT Max (ms)": rtt_max_list,
